@@ -1,0 +1,18 @@
+/db name.txt
+/server information.txt
+.gradle
+/local.properties
+/.idea/artifacts
+/.idea/libraries
+/.idea/compiler.xml
+/.idea/description.html
+/.idea/encodings.xml
+/.idea/gradle.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/uiDesigner.xml
+/.idea/workspace.xml
+.DS_Store
+/out
+/captures
+.externalNativeBuild

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.editValues.EditMenuValues">
+   <center>
+       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+           <children>
+               <Label text="Breakfast Menu" VBox.vgrow="ALWAYS">
+                   <font>
+                       <Font size="14.0" />
+                   </font>
+               </Label>
+               <TableView fx:id="bfastTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                   <columns>
+                       <TableColumn fx:id="colBfastWeek" prefWidth="40.0" text="Week" />
+                       <TableColumn fx:id="colBfastDay" prefWidth="35.0" text="Day" />
+                       <TableColumn fx:id="colBfastPrimaryDish" prefWidth="120.0" text="Primary Dish" />
+                       <TableColumn fx:id="colBfastSide1" prefWidth="120.0" text="Side 1" />
+                       <TableColumn fx:id="colBfastSide2" prefWidth="120.0" text="Side 2" />
+                       <TableColumn fx:id="colBfastSide3" prefWidth="120.0" text="Side 3" />
+                       <TableColumn fx:id="colBfastDessert" prefWidth="120.0" text="Dessert" />
+                   </columns>
+               </TableView>
+               <Label text="Lunch Menu" VBox.vgrow="ALWAYS">
+                   <font>
+                       <Font size="14.0" />
+                   </font>
+               </Label>
+               <TableView fx:id="lunchTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                   <columns>
+                       <TableColumn fx:id="colLunchWeek" prefWidth="40.0" text="Week" />
+                       <TableColumn fx:id="colLunchDay" prefWidth="35.0" text="Day" />
+                       <TableColumn fx:id="colLunchPrimaryDish" prefWidth="120.0" text="Primary Dish" />
+                       <TableColumn fx:id="colLunchSide1" prefWidth="120.0" text="Side 1" />
+                       <TableColumn fx:id="colLunchSide2" prefWidth="120.0" text="Side 2" />
+                       <TableColumn fx:id="colLunchSide3" prefWidth="120.0" text="Side 3" />
+                       <TableColumn fx:id="colLunchDessert" prefWidth="120.0" text="Dessert" />
+                   </columns>
+               </TableView>
+               <Label text="Supper Menu" VBox.vgrow="ALWAYS">
+                   <font>
+                       <Font size="14.0" />
+                   </font>
+               </Label>
+               <TableView fx:id="supperTable" prefHeight="200.0" VBox.vgrow="ALWAYS">
+                   <columns>
+                       <TableColumn fx:id="colSupperWeek" prefWidth="40.0" text="Week" />
+                       <TableColumn fx:id="colSupperDay" prefWidth="35.0" text="Day" />
+                       <TableColumn fx:id="colSupperPrimaryDish" prefWidth="120.0" text="Primary Dish" />
+                       <TableColumn fx:id="colSupperSide1" prefWidth="120.0" text="Side 1" />
+                       <TableColumn fx:id="colSupperSide2" prefWidth="120.0" text="Side 2" />
+                       <TableColumn fx:id="colSupperSide3" prefWidth="120.0" text="Side 3" />
+                       <TableColumn fx:id="colSupperDessert" prefWidth="120.0" text="Dessert" />
+                   </columns>
+               </TableView>
+           </children>
+           <BorderPane.margin>
+               <Insets left="5.0" top="5.0" />
+           </BorderPane.margin>
+       </VBox>
+   </center>
+</BorderPane>

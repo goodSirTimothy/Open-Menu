@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.about.About">
+   <center>
+      <ScrollPane BorderPane.alignment="TOP_LEFT">
+         <content>
+            <VBox alignment="TOP_CENTER" prefWidth="500.0" spacing="10.0">
+               <children>
+                  <Label text="About Application" wrapText="true" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="aboutApplication" text="Error: Couldn't load text" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS" />
+                  <Label text="About Software" wrapText="true" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="24.0" />
+                     </font></Label>
+                  <Label fx:id="aboutSoftware" text="Error: Couldn't load text" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS" />
+                  <Label text="Warnings" wrapText="true" VBox.vgrow="ALWAYS">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="warnings" text="Error: Couldn't load text" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="50.0" right="50.0" top="10.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
