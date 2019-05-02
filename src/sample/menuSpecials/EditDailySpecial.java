@@ -149,8 +149,13 @@ public class EditDailySpecial implements Initializable {
 
         // text fields, prompt text (so the user knows what to input and load any old inputted information.
         ComboBox<String> dropBox = new ComboBox<>();
-        dropBox.getItems().addAll("Entrees", "Sandwich", "Soups", "Sides", "Drinks", "Desserts", "Other");
-        dropBox.getSelectionModel().select(itemType);
+        dropBox.getItems().addAll("Entrees", "Sandwich", "Soups", "Sides", "Drinks", "Desserts");
+        if(itemType.equals("")){
+            dropBox.getSelectionModel().select(0);
+        } else {
+            dropBox.getSelectionModel().select(itemType);
+        }
+
 
         TextField name = new TextField();
         setTextFieldInformation(name, "Item Name", itemName);
