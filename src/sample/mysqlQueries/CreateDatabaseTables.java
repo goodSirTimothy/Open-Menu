@@ -21,6 +21,7 @@ public class CreateDatabaseTables {
             createMonthlySpecial(conn);
             createWeeklySpecial(conn);
             createDailySpecial(conn);
+            createBreakfast(conn);
         } catch (SQLException e) {
             System.out.println("Error in creating database: \n" + e);
             e.printStackTrace();
@@ -118,6 +119,25 @@ public class CreateDatabaseTables {
         try {
             Statement stmt;
             String query = "CREATE TABLE IF NOT EXISTS dailySpecial ("
+                    + "itemID int NOT NULL AUTO_INCREMENT,\n"
+                    + "typeOfItem varchar(45) NOT NULL,\n"
+                    + "itemName varchar(45), itemDescription varchar(255),\n"
+                    + "PRIMARY KEY (itemID)" + ");";
+            stmt = conn.createStatement();
+            stmt.execute(query);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Create the daily special menu (this is the menu that people can order daily
+     * @param conn
+     */
+    private void createBreakfast (Connection conn){
+        try {
+            Statement stmt;
+            String query = "CREATE TABLE IF NOT EXISTS breakfast ("
                     + "itemID int NOT NULL AUTO_INCREMENT,\n"
                     + "typeOfItem varchar(45) NOT NULL,\n"
                     + "itemName varchar(45), itemDescription varchar(255),\n"
