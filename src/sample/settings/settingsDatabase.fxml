@@ -24,11 +24,11 @@
    <center>
       <VBox alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="dbName" />
-            <TextField fx:id="serverURL" />
-            <TextField fx:id="username" />
-            <PasswordField fx:id="password" />
-            <TextField fx:id="portNum" />
+            <TextField fx:id="dbName" promptText="Name of the database" />
+            <TextField fx:id="serverURL" promptText="A.K.A. IP address" />
+            <TextField fx:id="username" promptText="(not root user)" />
+            <PasswordField fx:id="password" promptText="(not root password" />
+            <TextField fx:id="portNum" promptText="Port number (if needed)" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

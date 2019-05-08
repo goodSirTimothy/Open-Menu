@@ -126,10 +126,7 @@ public class CreateHallways implements Initializable {
             // update the room information
             if (dialogButton == submitButtonType) {
                 CreateDatabaseTables create = new CreateDatabaseTables();
-                if(optionControl == 0) {
-                    create.createTables(rootUser.getText(), rootPass.getText());
-                    populateTables(rootUser.getText(), rootPass.getText());
-                } else  if(optionControl == 1){
+                if(optionControl == 1){
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Reset Database?");
                     alert.setHeaderText("Are you sure you want to reset the database?");
@@ -140,6 +137,7 @@ public class CreateHallways implements Initializable {
                         create.resetAlertOk(rootUser.getText(), rootPass.getText());
                     }
                 } else if (optionControl == 2){
+                	
                 }
             }
             return null;

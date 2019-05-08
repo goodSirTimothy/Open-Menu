@@ -104,7 +104,7 @@ public class EditDailySpecial implements Initializable {
         // check the table's selected item and get selected item
         if (dailyTable.getSelectionModel().getSelectedItem() != null) {
             DailySpecialsModelTable selectedItem = dailyTable.getSelectionModel().getSelectedItem();
-            dialogEditRoom(selectedItem.getItemType(), selectedItem.getItemName(), selectedItem.getItemDescription(), selectedItem.getItemID(), 1);
+            dialogDailySpecial(selectedItem.getItemType(), selectedItem.getItemName(), selectedItem.getItemDescription(), selectedItem.getItemID(), 1);
             // clear the selection of the table (technically not needed since this is only one table.
             dailyTable.getSelectionModel().clearSelection();
         }
@@ -118,7 +118,7 @@ public class EditDailySpecial implements Initializable {
      * @param itemID = the ID of the item (just for database stuff. Not for the user to see)
      * @param controller = whether or not there will need to be an admin login. 0 == root, 1 == normal user
      */
-    private void dialogEditRoom(String itemType, String itemName, String itemDescription, String itemID, int controller){
+    private void dialogDailySpecial(String itemType, String itemName, String itemDescription, String itemID, int controller){
         // Create the custom dialog.
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Update Room");
@@ -179,7 +179,10 @@ public class EditDailySpecial implements Initializable {
             // update the room information
             if (dialogButton == submitButtonType) {
                 if(controller == 0) {
-                    dialogAdminLogin(dropBox.getValue(), name.getText(), description.getText());
+                    DatabaseQueries query = new DatabaseQueries();
+                    String mysqlQuery = "INSERT IGNORE INTO dailySpecial(typeOfItem, itemName, itemDescription) " +
+                            "VALUES (?, ?, ?)";
+                    query.rootQuery(mysqlQuery, itemType, itemName, itemDescription);
                 } else {
                     submitPressed(dropBox.getValue(), name.getText(), description.getText(), itemID);
                 }
@@ -282,50 +285,6 @@ public class EditDailySpecial implements Initializable {
     }
 
     public void addSpecialClicked() {
-        dialogEditRoom("", "", "", "", 0);
-    }
-    private void dialogAdminLogin(String itemType, String itemName, String itemDescription){
-        // Create the custom dialog.
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Root Input");
-        dialog.setHeaderText("Please input Root information");
-
-        // Set the button types.
-        ButtonType submitButtonType = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(submitButtonType, ButtonType.CANCEL);
-
-
-        // Grid Pane for setting up the layout for the dialog box.
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-
-        // text fields, prompt text (so the user knows what to input and load any old inputted information.
-        TextField rootUser = new TextField();
-        PasswordField rootPass = new PasswordField();
-
-        // Add labels and text fields to the grid
-        grid.add(new Label("Username:"), 0, 0);
-        grid.add(rootUser, 1, 0);
-        grid.add(new Label("Password:"), 0, 1);
-        grid.add(rootPass, 1, 1);
-
-        // add the Grid Pane to the dialog box
-        dialog.getDialogPane().setContent(grid);
-
-        // check any buttons pressed on the dialog box
-        dialog.setResultConverter(dialogButton -> {
-            // update the room information
-            if (dialogButton == submitButtonType) {
-                DatabaseQueries query = new DatabaseQueries();
-                String mysqlQuery = "INSERT IGNORE INTO dailySpecial(typeOfItem, itemName, itemDescription) " +
-                        "VALUES (?, ?, ?)";
-                query.rootQuery(mysqlQuery, rootUser.getText(), rootPass.getText(), itemType, itemName, itemDescription);
-            }
-            return null;
-        });
-        // showAndWait() is the last method to be called, because it displays the dialog box.
-        dialog.showAndWait();
+    	dialogDailySpecial("", "", "", "", 0);
     }
 }

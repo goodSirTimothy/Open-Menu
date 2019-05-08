@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Pair;
+import sample.mysqlQueries.CreateDatabaseTables;
 import sample.mysqlQueries.DatabaseQueries;
 
 import java.io.*;
@@ -80,8 +81,9 @@ public class SettingsDatabase implements Initializable {
             // save the file
             saveFile(db);
             // create the user. query.getRawURL()
-            query.createUser("CREATE USER ?@'%' IDENTIFIED BY ?;", rUser, rPass, username.getText(), password.getText());
-            query.grantPermissions("GRANT SELECT, UPDATE ON " + db + ".* TO ?@'%'", rUser, rPass, username.getText());
+            query.createUser("CREATE USER IF NOT EXISTS ?@'%';", rUser, rPass, username.getText());
+            query.createUserSetPassword("SET PASSWORD FOR ?@'%' = ?;", rUser, rPass, username.getText(), password.getText());
+            query.grantPermissions("GRANT SELECT, UPDATE, INSERT ON " + db + ".* TO ?@'%'", rUser, rPass, username.getText());
             // Query to grant permissions on all databases: "GRANT SELECT, UPDATE ON *.* TO ?@'%'", rUser, rPass, username.getText()
         } else {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -127,6 +129,9 @@ public class SettingsDatabase implements Initializable {
             // update the room information
             if (dialogButton == submitButtonType) {
                 checkConnectionAndWriteFiles(rootUser.getText(), rootPass.getText());
+                // create the tables in the database.
+                CreateDatabaseTables create = new CreateDatabaseTables();
+                create.createTables(rootUser.getText(), rootPass.getText());
                 rUser = rootUser.getText();
                 rPass = rootPass.getText();
             }

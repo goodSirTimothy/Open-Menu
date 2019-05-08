@@ -44,7 +44,31 @@ public class DatabaseQueries {
      * @param user = the new user
      * @param pass = the new user's password.
      */
-    public void createUser(String mysqlQuery, String rootUser, String rootPass, String user, String pass){
+    public void createUser(String mysqlQuery, String rootUser, String rootPass, String user){
+        PreparedStatement statement;
+        try {
+            Connection conn = DriverManager.getConnection(getFullURL(), rootUser, rootPass);
+            conn.setAutoCommit(false);
+            statement = conn.prepareStatement(mysqlQuery);
+            statement.setString(1, user);
+            statement.executeUpdate();
+            conn.commit();
+            statement.close();
+        } catch (SQLException e) {
+            System.out.println("Error in creating database: " + mysqlQuery + "\n" + e);
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * For creating the basic user
+     * @param mysqlQuery = the query
+     * @param rootUser = the root user
+     * @param rootPass = the root password (needed for creating a basic user)
+     * @param user = the new user
+     * @param pass = the new user's password.
+     */
+    public void createUserSetPassword(String mysqlQuery, String rootUser, String rootPass, String user, String pass){
         PreparedStatement statement;
         try {
             Connection conn = DriverManager.getConnection(getFullURL(), rootUser, rootPass);
@@ -115,10 +139,10 @@ public class DatabaseQueries {
      * @param itemName
      * @param itemDescription
      */
-    public void rootQuery(String mysqlQuery, String rUser, String rPassword, String itemType, String itemName, String itemDescription){
+    public void rootQuery(String mysqlQuery, String itemType, String itemName, String itemDescription){
         PreparedStatement statement;
         try {
-            Connection conn = DriverManager.getConnection(getFullURL(), rUser, rPassword);
+            Connection conn = DriverManager.getConnection(getFullURL(), getUser(), getPass());
             statement = conn.prepareStatement(mysqlQuery);
             statement.setString(1, itemType);
             statement.setString(2, itemName);
