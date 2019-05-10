@@ -152,19 +152,18 @@ public class CreateDatabaseTables {
 
     /**
      * This is an if statement to check if the hallway is visible
-     * @param hallView = the HBox holding the hall information.
-     * @param etHall = the text field for the hallway name.
-     * @param hallLowNum = the lowest number for the hallway.
-     * @param hallHighNum = the highest number for the hallway.
+     * @param hallName = the text field for the hallway name.
+     * @param lowNumber = the lowest number for the hallway.
+     * @param highNumber = the highest number for the hallway.
      */
-    public void hallwayIfVisible(HBox hallView, TextField etHall, TextField hallLowNum, TextField hallHighNum, String rootUser, String rootPass){
+    public void hallwayIfVisible(String hallName, String lowNumber, String highNumber){
         DatabaseQueries getInfo = new DatabaseQueries();
-        if (hallView.isVisible() && !"".equals(etHall.getText())) {
-            writeHallInfo(etHall.getText(), getInfo.getURL() + ":" + getInfo.getPort() + "/" + getInfo.getDbName(), rootUser, rootPass);
+        if (!"".equals(hallName)) {
+            writeHallInfo(hallName, getInfo.getURL() + ":" + getInfo.getPort() + "/" + getInfo.getDbName(), getInfo.getUser(), getInfo.getPass());
             try {
-                int roomLow = Integer.parseInt(hallLowNum.getText());
-                int roomHigh = Integer.parseInt(hallHighNum.getText());
-                writeRoomInfo(roomLow, roomHigh, etHall.getText(), getInfo.getURL() + ":" + getInfo.getPort() + "/" + getInfo.getDbName(), rootUser, rootPass);
+                int roomLow = Integer.parseInt(lowNumber);
+                int roomHigh = Integer.parseInt(highNumber);
+                writeRoomInfo(roomLow, roomHigh, hallName, getInfo.getURL() + ":" + getInfo.getPort() + "/" + getInfo.getDbName(), getInfo.getUser(), getInfo.getPass());
             } catch (NumberFormatException ignored) {
                 // No need for this because I already check all the inputs in "checkInputs()"
                 // but because you cannot parse a string into an int without NumberFormatException, I had to keep this bit of code.
@@ -239,6 +238,10 @@ public class CreateDatabaseTables {
         // Reset Tables
         resetTable("room", rootUser, rootPass);
         resetTable("hallway", rootUser, rootPass);
+        resetTable("breakfast", rootUser, rootPass);
+        resetTable("dailySpecial", rootUser, rootPass);
+        resetTable("weeklySpecial", rootUser, rootPass);
+        resetTable("monthlySpecial", rootUser, rootPass);
         // Create Tables
         createTables(rootUser, rootPass);
     }

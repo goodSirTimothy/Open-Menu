@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class SettingsDatabase implements Initializable {
@@ -80,7 +81,7 @@ public class SettingsDatabase implements Initializable {
             query.createDB("CREATE DATABASE IF NOT EXISTS " + db, rUser, rPass);
             // save the file
             saveFile(db);
-            // create the user. query.getRawURL()
+            // create the user. Reference: https://stackoverflow.com/questions/35392733/mysql-create-user-if-not-exists
             query.createUser("CREATE USER IF NOT EXISTS ?@'%';", rUser, rPass, username.getText());
             query.createUserSetPassword("SET PASSWORD FOR ?@'%' = ?;", rUser, rPass, username.getText(), password.getText());
             query.grantPermissions("GRANT SELECT, UPDATE, INSERT ON " + db + ".* TO ?@'%'", rUser, rPass, username.getText());
@@ -184,5 +185,66 @@ public class SettingsDatabase implements Initializable {
                 e.printStackTrace();
             }
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////// RESET CLICKED ///////////////////////////////////////////////////////////////
+    /**
+     * If reset is clicked, check with the user if they meant to click it. If so, delete the tables and recreate the tables.
+     * The reason why the program deletes the tables, because of foreign keys, the TRUNCATE command will not delete the values in hallway.
+     * So the way to solve this problem is to just delete the the tables (in proper order) and then recreate the tables.
+     */
+    public void resetClicked(){
+        dialogAdminReset();
+    }
+
+    private void dialogAdminReset() {
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Root Input");
+        dialog.setHeaderText("Please input Root information");
+
+        // Set the button types.
+        ButtonType submitButtonType = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(submitButtonType, ButtonType.CANCEL);
+
+
+        // Grid Pane for setting up the layout for the dialog box.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // text fields, prompt text (so the user knows what to input and load any old inputted information.
+        TextField rootUser = new TextField();
+        PasswordField rootPass = new PasswordField();
+
+        // Add labels and text fields to the grid
+        grid.add(new Label("Username:"), 0, 0);
+        grid.add(rootUser, 1, 0);
+        grid.add(new Label("Password:"), 0, 1);
+        grid.add(rootPass, 1, 1);
+
+        // add the Grid Pane to the dialog box
+        dialog.getDialogPane().setContent(grid);
+
+        // check any buttons pressed on the dialog box
+        dialog.setResultConverter(dialogButton -> {
+            // update the room information
+            if (dialogButton == submitButtonType) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Reset Database?");
+                alert.setHeaderText("Are you sure you want to reset the database?");
+                alert.setContentText("All information will be removed.");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    CreateDatabaseTables create = new CreateDatabaseTables();
+                    create.resetAlertOk(rootUser.getText(), rootPass.getText());
+                }
+            }
+            return null;
+        });
+        // showAndWait() is the last method to be called, because it displays the dialog box.
+        dialog.showAndWait();
     }
 }

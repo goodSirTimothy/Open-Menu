@@ -51,9 +51,9 @@
    <center>
       <VBox fx:id="mainCenterBox" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0" BorderPane.alignment="CENTER">
          <children>
+            <Button mnemonicParsing="false" onAction="#pingClicked" text="Ping Database" />
             <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
+            <Button mnemonicParsing="false" onAction="#setupClicked" text="How To Setup Program" />
             <Button fx:id="settings" mnemonicParsing="false" onAction="#settingsClicked" text="Settings" />
          </children>
          <opaqueInsets>

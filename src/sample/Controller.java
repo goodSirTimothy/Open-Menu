@@ -3,18 +3,23 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+import sample.mysqlQueries.DatabaseQueries;
 
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -31,6 +36,93 @@ public class Controller implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setupTreeView();
+    }
+
+    public void pingClicked(){
+        String connectionStatus = "No Connection.";
+        DatabaseQueries query = new DatabaseQueries();
+        int i = 0;
+        while(i<3 && connectionStatus.equals("No Connection.")) {
+            try {
+                DriverManager.getConnection(query.getURL() + ":" + query.getPort(), query.getUser(), query.getPass());
+                connectionStatus = "Connected.";
+            } catch (SQLException e) {
+                connectionStatus = "No Connection.";
+                e.printStackTrace();
+            }
+            i++;
+        }
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Ping");
+        dialog.setHeaderText("Pinging Database");
+
+        // Set the button types.
+        ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(closeButton);
+
+        // Grid Pane for setting up the layout for the dialog box.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // Add labels and text fields to the grid
+        grid.add(new Label("Database Connection:"), 0, 0);
+        grid.add(new Label(connectionStatus), 1, 0);
+
+        // add the Grid Pane to the dialog box
+        dialog.getDialogPane().setContent(grid);
+
+        // check any buttons pressed on the dialog box
+        dialog.setResultConverter(dialogButton -> {
+            // update the room information
+            return null;
+        });
+        // showAndWait() is the last method to be called, because it displays the dialog box.
+        dialog.showAndWait();
+    }
+
+    public void setupClicked(){
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Ping");
+        dialog.setHeaderText("Pinging Database");
+
+        // Set the button types.
+        ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(closeButton);
+
+        // Grid Pane for setting up the layout for the dialog box.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // Add labels and text fields to the grid
+        grid.add(new Label("Setup Database:"), 0, 0);
+        grid.add(new Label("This is where you will setup the database IP, database name, port,\nand create the user for this app to connect to the database with."), 1, 0);
+        grid.add(new Label("Create Hallway:"), 0, 1);
+        grid.add(new Label("You can add as many hallways as needed to the database.\nSimply click \"Add Hallway\" to add a hallway to the database.\nDouble click a hallway on the table to rename it."), 1, 1);
+        grid.add(new Label("Create Weekly Menu:"), 0, 2);
+        grid.add(new Label("Enter in how many weeks you would like for the weekly menu.\nClick submit and you will be prompted to input information for each meal."), 1, 2);
+
+        // add the Grid Pane to the dialog box
+        dialog.getDialogPane().setContent(grid);
+
+        // check any buttons pressed on the dialog box
+        dialog.setResultConverter(dialogButton -> {
+            // update the room information
+            return null;
+        });
+        // showAndWait() is the last method to be called, because it displays the dialog box.
+        dialog.showAndWait();
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////// TREE VIEW SETUP AND CLICK LOGIC ////////
+    private void setupTreeView(){
         TreeItem<String> root, about, settings, editValues, editMenuSpecials;
         root = new TreeItem<>();
         root.setExpanded(true);
@@ -40,16 +132,16 @@ public class Controller implements Initializable {
         makeBranch("Edit Room", editValues);
 
         editMenuSpecials = makeBranch("MENU SPECIALS", root);
-        makeBranch("Edit Monthly Specials", editMenuSpecials);
-        makeBranch("Edit Weekly Specials", editMenuSpecials);
-        makeBranch("Edit Daily Specials", editMenuSpecials);
         makeBranch("Edit Breakfast Menu", editMenuSpecials);
+        makeBranch("Edit Daily Specials", editMenuSpecials);
+        makeBranch("Edit Weekly Specials", editMenuSpecials);
+        makeBranch("Edit Monthly Specials", editMenuSpecials);
 
         about = makeBranch("ABOUT", root);
 
         settings = makeBranch("SETTINGS", root);
         makeBranch("Setup Database", settings);
-        makeBranch("Create Database", settings);
+        makeBranch("Create Hallway", settings);
         makeBranch("Create Weekly Menu", settings);
 
         // because settings is just for set up, setExpanded = false
@@ -91,20 +183,20 @@ public class Controller implements Initializable {
                     System.out.println(value);
                     break;
 
-                case "TreeItem [ value: Edit Monthly Specials ]":
-                    loadUI("menuSpecials/editMonthlySpecial");
-                    System.out.println(value);
-                    break;
-                case "TreeItem [ value: Edit Weekly Specials ]":
-                    loadUI("menuSpecials/editWeeklySpecial");
+                case "TreeItem [ value: Edit Breakfast Menu ]":
+                    loadUI("menuSpecials/editBreakfast");
                     System.out.println(value);
                     break;
                 case "TreeItem [ value: Edit Daily Specials ]":
                     loadUI("menuSpecials/editDailySpecial");
                     System.out.println(value);
                     break;
-                case "TreeItem [ value: Edit Breakfast Menu ]":
-                    loadUI("menuSpecials/editBreakfast");
+                case "TreeItem [ value: Edit Weekly Specials ]":
+                    loadUI("menuSpecials/editWeeklySpecial");
+                    System.out.println(value);
+                    break;
+                case "TreeItem [ value: Edit Monthly Specials ]":
+                    loadUI("menuSpecials/editMonthlySpecial");
                     System.out.println(value);
                     break;
 
@@ -119,7 +211,7 @@ public class Controller implements Initializable {
                     loadUI("settings/settingsDatabase");
                     System.out.println(value);
                     break;
-                case "TreeItem [ value: Create Database ]":
+                case "TreeItem [ value: Create Hallway ]":
                     loadUI("settings/createHallways");
                     System.out.println(value);
                     break;

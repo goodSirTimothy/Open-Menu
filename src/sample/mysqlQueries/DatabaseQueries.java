@@ -42,7 +42,6 @@ public class DatabaseQueries {
      * @param rootUser = the root user
      * @param rootPass = the root password (needed for creating a basic user)
      * @param user = the new user
-     * @param pass = the new user's password.
      */
     public void createUser(String mysqlQuery, String rootUser, String rootPass, String user){
         PreparedStatement statement;
@@ -123,7 +122,11 @@ public class DatabaseQueries {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Server Connection Error");
             alert.setHeaderText("Please Restart the server/Raspberry Pi");
-            alert.setContentText("If the problem still persists inform the person who set it up about:\n" + e);
+            if(e.toString().equals("java.sql.SQLSyntaxErrorException: Table 'test.bfastMenu' doesn't exist")){
+                alert.setContentText("Please setup the weekly menu to access this feature.");
+            } else {
+                alert.setContentText("If the problem still persists inform the person who set it up about:\n" + e.toString());
+            }
 
             alert.showAndWait();
         }
@@ -131,10 +134,35 @@ public class DatabaseQueries {
     }
 
     /**
+     * basic query to the database
+     * @param mysqlQuery = the query
+     * @return return the results of the query.
+     */
+    public void updateHallName(String mysqlQuery, String hallName, String hallID){
+        PreparedStatement statement;
+        try {
+            Connection conn = DriverManager.getConnection(getFullURL(), getUser(), getPass());
+            conn.setAutoCommit(false);
+            statement = conn.prepareStatement(mysqlQuery);
+            statement.setString(1, hallName);
+            statement.setString(2, hallID);
+            statement.executeUpdate();
+            conn.commit();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Server Connection Error");
+            alert.setHeaderText("Please Restart the server/Raspberry Pi");
+            alert.setContentText("If the problem still persists inform the person who set it up about:\n" + e);
+
+            alert.showAndWait();
+        }
+    }
+
+    /**
      *
      * @param mysqlQuery = the query
-     * @param rUser
-     * @param rPassword
      * @param itemType
      * @param itemName
      * @param itemDescription

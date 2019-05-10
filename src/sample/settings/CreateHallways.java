@@ -6,101 +6,109 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import sample.mysqlQueries.CreateDatabaseTables;
+import sample.mysqlQueries.DatabaseQueries;
 
 import java.net.URL;
-import java.util.Optional;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class CreateHallways implements Initializable {
-    private ObservableList<Integer> list = FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7);
-    @FXML
-    public ChoiceBox<Integer> hallDropBox = new ChoiceBox<>();
-    // Name text fields
-    @FXML
-    TextField etHall1, etHall2, etHall3, etHall4, etHall5, etHall6, etHall7;
-    // low room number text fields
-    @FXML
-    TextField hall1LowNum, hall2LowNum, hall3LowNum, hall4LowNum, hall5LowNum, hall6LowNum, hall7LowNum;
-    // high room number text fields
-    @FXML
-    TextField hall1HighNum, hall2HighNum, hall3HighNum, hall4HighNum, hall5HighNum, hall6HighNum, hall7HighNum;
-    // The HBox's are for hiding the hallways.
-    @FXML
-    HBox hall1, hall2, hall3, hall4, hall5, hall6, hall7;
     @FXML
     Label tvError;
+    @FXML
+    private TableView<HallModelTable> hallTable;
+    @FXML
+    private TableColumn<HallModelTable, String> colHallID, colHallName;
+    private ObservableList<HallModelTable> obListHallway = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        hideHallways();
-        hallDropBox.setValue(1);
-        hallDropBox.setItems(list);
-        forLoopForShowing(hallDropBox.getValue());
-    }
-
-    public void dropBox(){
-        hideHallways();
-        forLoopForShowing(hallDropBox.getValue());
-    }
-
-    private void hideHallways(){
-        hall1.setVisible(false);
-        hall2.setVisible(false);
-        hall3.setVisible(false);
-        hall4.setVisible(false);
-        hall5.setVisible(false);
-        hall6.setVisible(false);
-        hall7.setVisible(false);
+        loadTables();
     }
 
     /**
-     * This loop goes threw all of the HBoxes and sets the ones needed to visible.
-     * @param value = number of boxes that should be on screen
+     * loadTables is called at during initialize and is also called whenever the dialog box is opened.
      */
-    private void forLoopForShowing(int value){
-        for(int i = 0; i < value; i++) {
-            if(i == 0)
-                hall1.setVisible(true);
-            if(i == 1)
-                hall2.setVisible(true);
-            if(i == 2)
-                hall3.setVisible(true);
-            if(i == 3)
-                hall4.setVisible(true);
-            if(i == 4)
-                hall5.setVisible(true);
-            if(i == 5)
-                hall6.setVisible(true);
-            if(i == 6)
-                hall7.setVisible(true);
+    private void loadTables(){
+        connectToDatabase();
+        setupTables(colHallID, colHallName, hallTable, obListHallway);
+    }
+
+    private void connectToDatabase(){
+        DatabaseQueries query = new DatabaseQueries();
+        try {
+            // Send query to database. This asks for the hallway name linked to the hallwayID found in roomID.
+            ResultSet rs = query.queryToDatabase("SELECT * FROM hallway;");
+            while(rs.next()){
+                obListHallway.add(new HallModelTable(rs.getString("hallID"), rs.getString("hallName")));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    }
-    //////////////////////////////////////////////////////////////////////////////////// SUBMIT CLICKED ///////////////////////////////////////////////////////////////
-    /**
-     * When submit is clicked.
-     */
-    public void submitClicked() {
-        dialogAdminLogin(0);
     }
 
     /**
      *
+     * @param hallID = the room number.
+     * @param hallName = The hallway name.
+     * @param table = the GUI table.
+     * @param obList = the Observable List.
      */
-    private void dialogAdminLogin(int optionControl){
+    private void setupTables(TableColumn hallID, TableColumn hallName, TableView table, ObservableList obList){
+
+        // Set up the tables
+        setupTable(hallID, "hallID");
+        setupTable(hallName, "hallName");
+
+        // set the Observable List to the table.
+        table.setItems(obList);
+        // set on click for the table.
+        table.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getClickCount() > 1) {
+                onEdit();
+            }
+        });
+    }
+
+    /**
+     *
+     * @param column = the column being passed in.
+     * @param str = the String that is supposed to be found in MenuModelTable
+     */
+    private void setupTable(TableColumn column, String str){
+        column.setCellValueFactory(new PropertyValueFactory<>(str));
+    }
+
+    /**
+     * If the table is double clicked then onEdit will start
+     */
+    private void onEdit() {
+        // check the table's selected item and get selected item
+        if (hallTable.getSelectionModel().getSelectedItem() != null) {
+            HallModelTable selectedHall = hallTable.getSelectionModel().getSelectedItem();
+            dialogEditHallway(selectedHall.getHallID(), selectedHall.getHallName());
+            // clear the selection of the table (technically not needed since this is only one table.
+            hallTable.getSelectionModel().clearSelection();
+        }
+    }
+
+    private void dialogEditHallway(String hallID, String hallName){
         // Create the custom dialog.
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Root Input");
-        dialog.setHeaderText("Please input Root information");
+        dialog.setTitle("Update Room");
+        dialog.setHeaderText("To update the room information just fill out the text boxes!");
 
         // Set the button types.
         ButtonType submitButtonType = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(submitButtonType, ButtonType.CANCEL);
-
 
         // Grid Pane for setting up the layout for the dialog box.
         GridPane grid = new GridPane();
@@ -109,14 +117,11 @@ public class CreateHallways implements Initializable {
         grid.setPadding(new Insets(20, 150, 10, 10));
 
         // text fields, prompt text (so the user knows what to input and load any old inputted information.
-        TextField rootUser = new TextField();
-        PasswordField rootPass = new PasswordField();
+        TextField hallwayName = new TextField(hallName);
 
         // Add labels and text fields to the grid
-        grid.add(new Label("Username:"), 0, 0);
-        grid.add(rootUser, 1, 0);
-        grid.add(new Label("Password:"), 0, 1);
-        grid.add(rootPass, 1, 1);
+        grid.add(new Label("Hallway Name:"), 0, 0);
+        grid.add(hallwayName, 1, 0);
 
         // add the Grid Pane to the dialog box
         dialog.getDialogPane().setContent(grid);
@@ -125,69 +130,89 @@ public class CreateHallways implements Initializable {
         dialog.setResultConverter(dialogButton -> {
             // update the room information
             if (dialogButton == submitButtonType) {
-                CreateDatabaseTables create = new CreateDatabaseTables();
-                if(optionControl == 1){
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Reset Database?");
-                    alert.setHeaderText("Are you sure you want to reset the database?");
-                    alert.setContentText("All information will be removed.");
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK) {
-                        create.resetAlertOk(rootUser.getText(), rootPass.getText());
-                    }
-                } else if (optionControl == 2){
-                	
-                }
+                String mysqlQuery = "UPDATE " + "hallway " + "SET hallName = ? WHERE hallID = ?";
+                    tvError.setText("Database Updated");
+                    tvError.setTextFill(Color.BLACK);
+                    DatabaseQueries query = new DatabaseQueries();
+                query.updateHallName(mysqlQuery, hallwayName.getText(), hallID);
             }
+            // Reset the table view so it will load the new data.
+            hallTable.getItems().clear();
+            loadTables();
             return null;
         });
         // showAndWait() is the last method to be called, because it displays the dialog box.
         dialog.showAndWait();
     }
 
+    //////////////////////////////////////////////////////////////////////////////////// SUBMIT CLICKED ///////////////////////////////////////////////////////////////
+    /**
+     * When submit is clicked.
+     */
+    public void submitClicked() {
+        dialogSubmit();
+    }
     /**
      *
      */
-    private void populateTables(String rUser, String rPass){
-        boolean inputError = false;
-        // Make checks to see if there are any bad inputs. If the hallway is visible.
-        if(hall1.isVisible())
-            inputError = checkInputs(inputError, etHall1, hall1LowNum, hall1HighNum, 1);
-        if(hall2.isVisible())
-            inputError = checkInputs(inputError, etHall2, hall2LowNum, hall2HighNum, 2);
-        if(hall3.isVisible())
-            inputError = checkInputs(inputError, etHall3, hall3LowNum, hall3HighNum, 3);
-        if(hall4.isVisible())
-            inputError = checkInputs(inputError, etHall4, hall4LowNum, hall4HighNum, 4);
-        if(hall5.isVisible())
-            inputError = checkInputs(inputError, etHall5, hall5LowNum, hall5HighNum, 5);
-        if(hall6.isVisible())
-            inputError = checkInputs(inputError, etHall6, hall6LowNum, hall6HighNum, 6);
-        if(hall7.isVisible())
-            inputError = checkInputs(inputError, etHall7, hall7LowNum, hall7HighNum, 7);
-        System.out.println("inputError = " + inputError);
-        if (!inputError) {
-            CreateDatabaseTables create = new CreateDatabaseTables();
-            create.hallwayIfVisible(hall1, etHall1, hall1LowNum, hall1HighNum, rUser, rPass);
-            create.hallwayIfVisible(hall2, etHall2, hall2LowNum, hall2HighNum, rUser, rPass);
-            create.hallwayIfVisible(hall3, etHall3, hall3LowNum, hall3HighNum, rUser, rPass);
-            create.hallwayIfVisible(hall4, etHall4, hall4LowNum, hall4HighNum, rUser, rPass);
-            create.hallwayIfVisible(hall5, etHall5, hall5LowNum, hall5HighNum, rUser, rPass);
-            create.hallwayIfVisible(hall6, etHall6, hall6LowNum, hall6HighNum, rUser, rPass);
-            create.hallwayIfVisible(hall7, etHall7, hall7LowNum, hall7HighNum, rUser, rPass);
-            tvError.setText("Database Updated");
-            tvError.setTextFill(Color.BLACK);
-        }
+    private void dialogSubmit(){
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Update Room");
+        dialog.setHeaderText("To update the room information just fill out the text boxes!");
+
+        // Set the button types.
+        ButtonType submitButtonType = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(submitButtonType, ButtonType.CANCEL);
+
+        // Grid Pane for setting up the layout for the dialog box.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // text fields, prompt text (so the user knows what to input and load any old inputted information.
+        TextField hallName = new TextField();
+        TextField lowNumber = new TextField();
+        TextField highNumber = new TextField();
+
+        // Add labels and text fields to the grid
+        grid.add(new Label("Hallway Name:"), 0, 0);
+        grid.add(hallName, 1, 0);
+        grid.add(new Label("Lowest Room Number:"), 0, 1);
+        grid.add(lowNumber, 1, 1);
+        grid.add(new Label("Highest Room Number:"), 0, 2);
+        grid.add(highNumber, 1, 2);
+
+        // add the Grid Pane to the dialog box
+        dialog.getDialogPane().setContent(grid);
+
+        // check any buttons pressed on the dialog box
+        dialog.setResultConverter(dialogButton -> {
+            // update the room information
+            if (dialogButton == submitButtonType) {
+                boolean inputError = checkInputs(hallName, lowNumber, highNumber);
+                System.out.println("inputError = " + inputError);
+                if(!inputError){
+                    tvError.setText("Database Updated");
+                    tvError.setTextFill(Color.BLACK);
+                    CreateDatabaseTables create = new CreateDatabaseTables();
+                    create.hallwayIfVisible(hallName.getText(), lowNumber.getText(), highNumber.getText());
+                }
+            }
+            // Reset the table view so it will load the new data.
+            hallTable.getItems().clear();
+            loadTables();
+            return null;
+        });
+        // showAndWait() is the last method to be called, because it displays the dialog box.
+        dialog.showAndWait();
     }
 
-    private boolean checkInputs(boolean inputError, TextField etHall, TextField hallLowNum, TextField hallHighNum, int hallNumber){
-        if(inputError){
-            return true;
-        }
+    private boolean checkInputs(TextField etHall, TextField hallLowNum, TextField hallHighNum){
         if("".equals(etHall.getText())){
             tvError.setTextFill(Color.web("#FF0000"));
-            tvError.setText("Name of hallway " + hallNumber + ", is blank");
+            tvError.setText("Name of hallway is blank");
             return true;
         }
         try {
@@ -196,24 +221,14 @@ public class CreateHallways implements Initializable {
             boolean ifLess = roomLow < roomHigh;
             if(!ifLess){
                 tvError.setTextFill(Color.web("#FF0000"));
-                tvError.setText("low number in hallway " + hallNumber + ", is greater then or equal to the highest number");
+                tvError.setText("low number in hallway is greater then or equal to the highest number");
                 return true;
             }
         } catch (NumberFormatException e) {
             tvError.setTextFill(Color.web("#FF0000"));
-            tvError.setText("low number in hallway " + hallNumber + ", is greater then the highest number");
+            tvError.setText("Error: Room number input does not contain numbers");
             return true;
         }
         return false;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////// RESET CLICKED ///////////////////////////////////////////////////////////////
-    /**
-     * If reset is clicked, check with the user if they meant to click it. If so, delete the tables and recreate the tables.
-     * The reason why the program deletes the tables, because of foreign keys, the TRUNCATE command will not delete the values in hallway.
-     * So the way to solve this problem is to just delete the the tables (in proper order) and then recreate the tables.
-     */
-    public void resetClicked(){
-        dialogAdminLogin(1);
     }
 }

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.settings.CreateWeeklyMenu">
-   <top>
+   <center>
       <VBox BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER_LEFT" spacing="5.0">
@@ -21,7 +22,7 @@
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#submitClicked" text="Submit" />
-                  <Label fx:id="error"/>
+                  <Label fx:id="error" />
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -29,5 +30,12 @@
             </HBox>
          </children>
       </VBox>
+   </center>
+   <top>
+      <Label BorderPane.alignment="CENTER">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
    </top>
 </BorderPane>

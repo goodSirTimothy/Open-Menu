@@ -177,7 +177,7 @@ public class EditMonthlySpecial implements Initializable {
                     DatabaseQueries query = new DatabaseQueries();
                     String mysqlQuery = "INSERT IGNORE INTO monthlySpecial(typeOfItem, itemName, itemDescription) " +
                             "VALUES (?, ?, ?)";
-                    query.rootQuery(mysqlQuery,  itemType, itemName, itemDescription);
+                    query.rootQuery(mysqlQuery,  dropBox.getValue(), name.getText(), description.getText());
                 } else {
                     submitPressed(dropBox.getValue(), name.getText(), description.getText(), itemID);
                 }

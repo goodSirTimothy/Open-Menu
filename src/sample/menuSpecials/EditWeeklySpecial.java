@@ -177,7 +177,7 @@ public class EditWeeklySpecial implements Initializable {
                     DatabaseQueries query = new DatabaseQueries();
                     String mysqlQuery = "INSERT IGNORE INTO weeklySpecial(dayID, itemName, itemDescription) " +
                             "VALUES (?, ?, ?)";
-                    query.rootQuery(mysqlQuery, dayID, itemName, itemDescription);
+                    query.rootQuery(mysqlQuery, dropBox.getValue(), name.getText(), description.getText());
                 } else {
                     submitPressed(dropBox.getValue(), name.getText(), description.getText(), itemID);
                 }
