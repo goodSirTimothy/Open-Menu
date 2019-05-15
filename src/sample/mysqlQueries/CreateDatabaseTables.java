@@ -1,8 +1,6 @@
 package sample.mysqlQueries;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 
 import java.sql.*;
 
@@ -22,6 +20,7 @@ public class CreateDatabaseTables {
             createWeeklySpecial(conn);
             createDailySpecial(conn);
             createBreakfast(conn);
+            createOrders(conn);
         } catch (SQLException e) {
             System.out.println("Error in creating database: \n" + e);
             e.printStackTrace();
@@ -142,6 +141,28 @@ public class CreateDatabaseTables {
                     + "typeOfItem varchar(45) NOT NULL,\n"
                     + "itemName varchar(45), itemDescription varchar(255),\n"
                     + "PRIMARY KEY (itemID)" + ");";
+            stmt = conn.createStatement();
+            stmt.execute(query);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Create the daily special menu (this is the menu that people can order daily
+     * @param conn
+     */
+    private void createOrders (Connection conn){
+        try {
+            Statement stmt;
+            String query = "CREATE TABLE IF NOT EXISTS orders ("
+                    + "orderID int NOT NULL AUTO_INCREMENT,\n"
+                    + "roomID int NOT NULL,\n"
+                    + "primaryDish varchar(100), sides varchar(100), drinks varchar(50), desserts varchar(50),\n"
+                    + "month int NOT NULL, day int NOT NULL, year int NOT NULL,\n"
+                    + "ordered TINYINT(1) NOT NULL, served TINYINT(1) NOT NULL, mealTime varchar(20),\n"
+                    + "FOREIGN KEY(`roomID`) REFERENCES `room`(`roomID`),\n"
+                    + "PRIMARY KEY (orderID)" + ");";
             stmt = conn.createStatement();
             stmt.execute(query);
             stmt.close();
