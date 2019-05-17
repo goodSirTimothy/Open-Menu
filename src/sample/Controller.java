@@ -216,7 +216,7 @@ public class Controller implements Initializable {
                     System.out.println(value);
                     break;
                 case "TreeItem [ value: Create Weekly Menu ]":
-                    loadUI("settings/CreateWeeklyMenu");
+                    loadUI("settings/createWeeklyMenu");
                     System.out.println(value);
                     break;
                 default:
