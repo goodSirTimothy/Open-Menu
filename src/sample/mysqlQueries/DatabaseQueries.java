@@ -115,6 +115,7 @@ public class DatabaseQueries {
     public ResultSet queryToDatabase(String mysqlQuery){
         ResultSet rs = null;
         try {
+        	System.out.println(getFullURL());
             Connection conn = DriverManager.getConnection(getFullURL(), getUser(), getPass());
             rs = conn.createStatement().executeQuery(mysqlQuery);
         } catch (SQLException e) {

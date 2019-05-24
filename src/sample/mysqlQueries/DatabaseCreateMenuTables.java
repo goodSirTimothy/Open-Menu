@@ -85,11 +85,11 @@ public class DatabaseCreateMenuTables {
                 break;
             case "lunchMenu":
                 dialog.setTitle("Lunch Menu Items");
-                dialog.setHeaderText("To insert the menu items just fill out the text boxes!");
+                dialog.setHeaderText("Week " + i + ": " + day);
                 break;
             case "supperMenu":
                 dialog.setTitle("Supper Menu Items");
-                dialog.setHeaderText("To insert the menu items just fill out the text boxes!");
+                dialog.setHeaderText("Week " + i + ": " + day);
                 break;
         }
 

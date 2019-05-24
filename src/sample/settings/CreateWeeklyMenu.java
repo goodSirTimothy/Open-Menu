@@ -44,8 +44,8 @@ public class CreateWeeklyMenu implements Initializable {
         AtomicBoolean login = new AtomicBoolean(false);
         // Create the custom dialog.
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        dialog.setTitle("Update Room");
-        dialog.setHeaderText("To update the room information just fill out the text boxes!");
+        dialog.setTitle("Root User Login");
+        dialog.setHeaderText("Login as the root user to add the weekly menu.");
 
         // Set the button types.
         ButtonType submitButtonType = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);

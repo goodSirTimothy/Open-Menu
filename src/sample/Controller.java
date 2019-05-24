@@ -130,6 +130,7 @@ public class Controller implements Initializable {
         editValues = makeBranch("CHANGE INFORMATION", root);
         makeBranch("Edit Weekly Menu", editValues);
         makeBranch("Edit Room", editValues);
+        makeBranch("Edit Tables", editValues);
 
         editMenuSpecials = makeBranch("MENU SPECIALS", root);
         makeBranch("Edit Breakfast Menu", editMenuSpecials);
@@ -180,6 +181,10 @@ public class Controller implements Initializable {
                     break;
                 case "TreeItem [ value: Edit Room ]":
                     loadUI("editValues/editRoomValues");
+                    System.out.println(value);
+                    break;
+                case "TreeItem [ value: Edit Tables ]":
+                    loadUI("editValues/editTablesValues");
                     System.out.println(value);
                     break;
 
